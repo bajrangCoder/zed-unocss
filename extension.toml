@@ -9,13 +9,14 @@ repository = "https://github.com/bajrangCoder/zed-unocss"
 [language_servers.unocss-language-server]
 name = "UnoCSS Language Server"
 languages = [
-    "astro",
-    "html",
-    "javascript",
-    "typescriptreact",
-    "svelte",
-    "phoenix-heex",
-    "erb",
-    "php",
-    "vue",
+    "Astro",
+    "HTML",
+    "JavaScript",
+    "TSX",
+    "Svelte",
+    "Elixir",
+    "HEEX",
+    "ERB",
+    "PHP",
+    "Vue.js",
 ]

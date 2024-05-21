@@ -1,5 +1,5 @@
 use std::{env, fs};
-use zed_extension_api::{self as zed, serde_json, Result};
+use zed_extension_api::{self as zed, Result};
 
 const SERVER_PATH: &str = "node_modules/unocss-language-server/bin/index.js";
 const PACKAGE_NAME: &str = "unocss-language-server";
@@ -80,21 +80,6 @@ impl zed::Extension for UnoCSSExtension {
             env: Default::default(),
         })
     }
-
-    // fn language_server_initialization_options(
-    //     &mut self,
-    //     _: &zed::LanguageServerId,
-    //     _: &zed::Worktree,
-    // ) -> Result<Option<serde_json::Value>> {
-    //     Ok(Some(serde_json::json!({
-    //         "provideFormatter": true,
-    //         "userLanguages": {
-    //             "html": "html",
-    //             "javascript": "javascript",
-    //             "typescriptreact": "typescriptreact",
-    //         },
-    //     })))
-    // }
 }
 
 zed::register_extension!(UnoCSSExtension);
