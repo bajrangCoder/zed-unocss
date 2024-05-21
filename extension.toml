@@ -1,0 +1,21 @@
+id = "unocss"
+name = "UnoCSS"
+description = "UnoCSS support"
+version = "0.0.1"
+schema_version = 1
+authors = ["Raunak Raj <bajrangcoders@gmail.com>"]
+repository = "https://github.com/bajrangCoder/zed-unocss"
+
+[language_servers.unocss-language-server]
+name = "UnoCSS Language Server"
+languages = [
+    "astro",
+    "html",
+    "javascript",
+    "typescriptreact",
+    "svelte",
+    "phoenix-heex",
+    "erb",
+    "php",
+    "vue",
+]
