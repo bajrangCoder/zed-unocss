@@ -9,7 +9,7 @@ UnoCSS support for [Zed](https://zed.dev).
 
 ## Demo
 
-![Demo](https://user-images.githubusercontent.com/1013641/137593073-3b3b3b3b-1b3b-4b3b-8b3b-3b3b3b3b3b3b.gif)
+<video src="https://github.com/bajrangCoder/zed-unocss/assets/71929976/c368ceba-bded-46c4-a0d1-63bf90e0be4d"></video>
 
 ## Creadits
 
