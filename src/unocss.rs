@@ -1,8 +1,8 @@
 use std::{env, fs};
 use zed_extension_api::{self as zed, Result};
 
-const SERVER_PATH: &str = "node_modules/unocss-language-server/bin/index.js";
-const PACKAGE_NAME: &str = "unocss-language-server";
+const SERVER_PATH: &str = "node_modules/@bajrangcoder/unocss-language-server/bin/index.js";
+const PACKAGE_NAME: &str = "@bajrangcoder/unocss-language-server";
 
 pub struct UnoCSSExtension {
     did_find_server: bool,
