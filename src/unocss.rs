@@ -70,7 +70,8 @@ impl zed::Extension for UnoCSSExtension {
         Ok(zed::Command {
             command: zed::node_binary_path()?,
             args: vec![
-                zed_ext::sanitize_windows_path(env::current_dir().unwrap())
+                env::current_dir()
+                    .unwrap()
                     .join(&server_path)
                     .to_string_lossy()
                     .to_string(),
@@ -82,19 +83,3 @@ impl zed::Extension for UnoCSSExtension {
 }
 
 zed::register_extension!(UnoCSSExtension);
-
-mod zed_ext {
-    pub fn sanitize_windows_path(path: std::path::PathBuf) -> std::path::PathBuf {
-        use zed_extension_api::{current_platform, Os};
-
-        let (os, _arch) = current_platform();
-        match os {
-            Os::Mac | Os::Linux => path,
-            Os::Windows => path
-                .to_string_lossy()
-                .to_string()
-                .trim_start_matches('/')
-                .into(),
-        }
-    }
-}
