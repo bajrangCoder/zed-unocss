@@ -742,7 +742,7 @@ dependencies = [
 
 [[package]]
 name = "zed_unocss"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "zed_extension_api",
 ]

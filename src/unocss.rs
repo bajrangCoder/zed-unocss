@@ -23,27 +23,28 @@ impl UnoCSSExtension {
             id,
             &zed::LanguageServerInstallationStatus::CheckingForUpdate,
         );
-        let version = zed::npm_package_latest_version(PACKAGE_NAME)?;
 
-        if !server_exists
-            || zed::npm_package_installed_version(PACKAGE_NAME)?.as_ref() != Some(&version)
-        {
+        let version = zed::npm_package_latest_version(PACKAGE_NAME)?;
+        let installed = zed::npm_package_installed_version(PACKAGE_NAME)?;
+
+        if !server_exists || installed.as_deref() != Some(version.as_str()) {
             zed::set_language_server_installation_status(
                 id,
                 &zed::LanguageServerInstallationStatus::Downloading,
             );
-            let result = zed::npm_install_package(PACKAGE_NAME, &version);
-            match result {
+
+            let install_result = zed::npm_install_package(PACKAGE_NAME, &version);
+            match install_result {
                 Ok(()) => {
                     if !self.server_exists() {
-                        Err(format!(
-                                "installed package '{PACKAGE_NAME}' did not contain expected path '{SERVER_PATH}'",
-                            ))?;
+                        return Err(format!(
+                            "installed package '{PACKAGE_NAME}' did not contain expected path '{SERVER_PATH}'"
+                        ));
                     }
                 }
                 Err(error) => {
                     if !self.server_exists() {
-                        Err(error)?;
+                        return Err(error);
                     }
                 }
             }
@@ -51,6 +52,12 @@ impl UnoCSSExtension {
 
         self.did_find_server = true;
         Ok(SERVER_PATH.to_string())
+    }
+
+    fn absolute_server_script_path(&mut self, id: &zed::LanguageServerId) -> Result<String> {
+        let rel = self.server_script_path(id)?;
+        let cwd = env::current_dir().map_err(|e| format!("failed to get extension cwd: {e}"))?;
+        Ok(cwd.join(rel).to_string_lossy().to_string())
     }
 }
 
@@ -64,21 +71,41 @@ impl zed::Extension for UnoCSSExtension {
     fn language_server_command(
         &mut self,
         id: &zed::LanguageServerId,
-        _: &zed::Worktree,
+        worktree: &zed::Worktree,
     ) -> Result<zed::Command> {
-        let server_path = self.server_script_path(id)?;
+        let server_path = self.absolute_server_script_path(id)?;
         Ok(zed::Command {
             command: zed::node_binary_path()?,
-            args: vec![
-                env::current_dir()
-                    .unwrap()
-                    .join(&server_path)
-                    .to_string_lossy()
-                    .to_string(),
-                "--stdio".to_string(),
-            ],
-            env: Default::default(),
+            args: vec![server_path],
+            env: worktree.shell_env(),
         })
+    }
+
+    fn language_server_initialization_options(
+        &mut self,
+        id: &zed::LanguageServerId,
+        worktree: &zed::Worktree,
+    ) -> Result<Option<zed::serde_json::Value>> {
+        let lsp = zed::settings::LspSettings::for_worktree(id.as_ref(), worktree)?;
+        Ok(lsp.initialization_options)
+    }
+
+    fn language_server_workspace_configuration(
+        &mut self,
+        id: &zed::LanguageServerId,
+        worktree: &zed::Worktree,
+    ) -> Result<Option<zed::serde_json::Value>> {
+        let lsp = zed::settings::LspSettings::for_worktree(id.as_ref(), worktree)?;
+        let Some(settings) = lsp.settings else {
+            return Ok(None);
+        };
+
+        // Server expects settings under `unocss`.
+        if settings.get("unocss").is_some() {
+            Ok(Some(settings))
+        } else {
+            Ok(Some(zed::serde_json::json!({ "unocss": settings })))
+        }
     }
 }
 
