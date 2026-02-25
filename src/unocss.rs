@@ -76,7 +76,7 @@ impl zed::Extension for UnoCSSExtension {
         let server_path = self.absolute_server_script_path(id)?;
         Ok(zed::Command {
             command: zed::node_binary_path()?,
-            args: vec![server_path],
+            args: vec![server_path, "--stdio".to_string()],
             env: worktree.shell_env(),
         })
     }
